@@ -52,6 +52,7 @@ Como usuário, quero visualizar as receitas ordenadas por avaliação.
 ## US06 — Fazer comentário
 
 Como usuário, quero deixar comentários e dicas nas receitas.
+
 ---
 
 ## US07 — Filtrar por maior quantidade de ingredientes
