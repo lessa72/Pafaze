@@ -150,6 +150,8 @@ flowchart LR
     API --> R
 ```
 
+Além disso, o Pafazê possui entidades principais (Usuário, Receita, Ingrediente, Avaliação e Comentário) e relacionamentos entre elas (como as conexões de amizade entre usuários e a ligação entre uma receita e suas avaliações). Essa modelagem visual serve como base lógica para estruturarmos as tabelas do nosso banco de dados no backend.
+
 ```mermaid
 classDiagram
     class Usuario {
@@ -175,7 +177,7 @@ classDiagram
         +String nome
         +float quantidade
     }
-    
+    os
     class Avaliacao {
         +int id
         +int nota
