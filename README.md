@@ -4,7 +4,7 @@ Sistema web para compartilhamento e descoberta de receitas a partir dos
 ingredientes disponíveis pelo usuário.
 
 ## Equipe
-Júlia Almeida Luna, Gabriel de Souza Gomes, Alice Lessa Ferreira, Davi Santos Rodrigues
+Júlia Almeida Luna (Backend), Gabriel de Souza Gomes (Full-stack), Alice Lessa Ferreira (Full-stack), Davi Santos Rodrigues (Frontend)
 
 # Objetivo
 
@@ -148,3 +148,49 @@ flowchart LR
     DB --> S
     S --> API
     API --> R
+```
+
+```mermaid
+classDiagram
+    class Usuario {
+        +int id
+        +String nome
+        +String email
+        +String senha
+        +cadastrarReceita()
+        +avaliarReceita()
+        +adicionarAmigo()
+    }
+    
+    class Receita {
+        +int id
+        +String nome
+        +String categoria
+        +String modoPreparo
+        +listarIngredientes()
+    }
+    
+    class Ingrediente {
+        +int id
+        +String nome
+        +float quantidade
+    }
+    
+    class Avaliacao {
+        +int id
+        +int nota
+    }
+    
+    class Comentario {
+        +int id
+        +String texto
+    }
+
+    Usuario "1" -- "*" Receita : cria >
+    Usuario "*" -- "*" Usuario : amigos >
+    Usuario "1" -- "*" Avaliacao : faz >
+    Usuario "1" -- "*" Comentario : escreve >
+    Receita "1" -- "*" Ingrediente : possui >
+    Receita "1" -- "*" Avaliacao : recebe >
+    Receita "1" -- "*" Comentario : possui >
+```
