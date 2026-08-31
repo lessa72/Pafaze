@@ -1,6 +1,6 @@
 # 🍳 Pafazê
 
-Sistema web para compartilhamento e descoberta de receitas a partir dos
+Rede social e sistema web para compartilhamento e descoberta de receitas a partir dos
 ingredientes disponíveis pelo usuário.
 
 ## Equipe
