@@ -2,6 +2,7 @@ from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
 
+from app.api.routes import api_router
 from app.core.cors import configure_cors
 from app.db.init_db import create_tables
 
@@ -20,6 +21,7 @@ app = FastAPI(
 )
 
 configure_cors(app)
+app.include_router(api_router)
 
 
 @app.get("/health")
