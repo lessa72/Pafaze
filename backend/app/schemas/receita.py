@@ -1,18 +1,11 @@
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import BaseModel, ConfigDict
 
 
-class ReceitaBase(BaseModel):
-    nome: str = Field(..., min_length=1, max_length=150)
-    categoria: str = Field(..., min_length=1, max_length=80)
-    modo_preparo: str = Field(..., min_length=1)
-
-
-class ReceitaCreate(ReceitaBase):
-    usuario_id: int
-
-
-class ReceitaResponse(ReceitaBase):
+class ReceitaResponse(BaseModel):
     id: int
+    nome: str
+    categoria: str
+    modo_preparo: str
     usuario_id: int
     media_avaliacao: float = 0.0
     total_avaliacoes: int = 0
