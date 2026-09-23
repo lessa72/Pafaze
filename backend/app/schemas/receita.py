@@ -2,6 +2,8 @@ from pydantic import BaseModel, ConfigDict
 
 
 class ReceitaResponse(BaseModel):
+    """Esquema de resposta de receita com métricas de avaliação (US03 e US05)."""
+
     id: int
     nome: str
     categoria: str

@@ -7,6 +7,7 @@ from app.schemas.receita import ReceitaResponse
 
 
 def listar_categorias(db: Session) -> list[str]:
+    """Retorna todas as categorias únicas de receitas cadastradas para o filtro (US03)."""
     categorias = (
         db.query(Receita.categoria)
         .distinct()
@@ -23,6 +24,11 @@ def buscar_receitas(
     ordenar_por: str | None = None,
     ordem: str = "desc",
 ) -> list[ReceitaResponse]:
+    """
+    Busca receitas aplicando filtros de nome e categoria (US03)
+    e ordenação por avaliação calculada (US05).
+    """
+    # Agrega média e total de avaliações via outer join para manter receitas sem avaliação (US05)
     query = (
         db.query(
             Receita,
@@ -33,12 +39,15 @@ def buscar_receitas(
         .group_by(Receita.id)
     )
 
+    # Filtro por nome: busca parcial case-insensitive (US03)
     if nome:
         query = query.filter(Receita.nome.ilike(f"%{nome.strip()}%"))
 
+    # Filtro por categoria exata case-insensitive (US03)
     if categoria:
         query = query.filter(func.lower(Receita.categoria) == categoria.strip().lower())
 
+    # Ordenação por média de avaliação (US05) ou por ID mais recente (padrão)
     if ordenar_por == "avaliacao":
         coluna_ordenacao = func.coalesce(func.avg(Avaliacao.nota), 0.0)
         if ordem.lower() == "asc":
