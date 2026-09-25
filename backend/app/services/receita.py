@@ -7,6 +7,8 @@ from app.models.receita import Receita
 from app.models.receita_ingrediente import ReceitaIngrediente
 from app.models.usuario import Usuario
 from app.schemas.receita import (
+    AvaliacaoCreate,
+    AvaliacaoResponse,
     IngredienteItem,
     ReceitaCreate,
     ReceitaDetalheResponse,
@@ -144,5 +146,38 @@ def obter_receita_por_id(db: Session, receita_id: int) -> ReceitaDetalheResponse
         total_avaliacoes=int(total),
         ingredientes=itens,
     )
+
+
+def avaliar_receita(db: Session, receita_id: int, dados: AvaliacaoCreate) -> AvaliacaoResponse:
+    """Atribui ou atualiza avaliação de um usuário para uma receita (US04)."""
+    if not db.query(Receita).filter(Receita.id == receita_id).first():
+        raise ValueError("Receita não encontrada.")
+    if not db.query(Usuario).filter(Usuario.id == dados.usuario_id).first():
+        raise ValueError("Usuário não encontrado.")
+
+    avaliacao = (
+        db.query(Avaliacao)
+        .filter(Avaliacao.receita_id == receita_id, Avaliacao.usuario_id == dados.usuario_id)
+        .first()
+    )
+    if avaliacao:
+        avaliacao.nota = dados.nota
+    else:
+        avaliacao = Avaliacao(
+            receita_id=receita_id,
+            usuario_id=dados.usuario_id,
+            nota=dados.nota,
+        )
+        db.add(avaliacao)
+
+    db.commit()
+    db.refresh(avaliacao)
+    return AvaliacaoResponse(
+        id=avaliacao.id,
+        receita_id=avaliacao.receita_id,
+        usuario_id=avaliacao.usuario_id,
+        nota=avaliacao.nota,
+    )
+
 
 
