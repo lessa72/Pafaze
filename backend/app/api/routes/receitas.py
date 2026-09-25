@@ -3,7 +3,15 @@ from sqlalchemy.orm import Session
 
 from app.db.session import get_db
 from app.schemas.receita import ReceitaCreate, ReceitaDetalheResponse, ReceitaResponse
+from app.schemas.receita import (
+    AvaliacaoCreate,
+    AvaliacaoResponse,
+    ReceitaCreate,
+    ReceitaDetalheResponse,
+    ReceitaResponse,
+)
 from app.services.receita import (
+    avaliar_receita,
     buscar_receitas,
     criar_receita,
     listar_categorias,
@@ -56,4 +64,14 @@ def detalhar_receita(id: int, db: Session = Depends(get_db)):
     if not receita:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Receita não encontrada.")
     return receita
+
+
+@router.post("/{id}/avaliacoes", response_model=AvaliacaoResponse, status_code=status.HTTP_201_CREATED)
+def atribuir_avaliacao(id: int, dados: AvaliacaoCreate, db: Session = Depends(get_db)):
+    """Atribui avaliação a uma receita (US04)."""
+    try:
+        return avaliar_receita(db=db, receita_id=id, dados=dados)
+    except ValueError as e:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(e))
+
 
