@@ -4,7 +4,6 @@ from sqlalchemy.orm import Session
 from app.models.avaliacao import Avaliacao
 from app.models.ingrediente import Ingrediente
 from app.models.receita import Receita
-from app.schemas.receita import ReceitaResponse
 from app.models.receita_ingrediente import ReceitaIngrediente
 from app.models.usuario import Usuario
 from app.schemas.receita import (

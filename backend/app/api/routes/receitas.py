@@ -1,10 +1,7 @@
-from fastapi import APIRouter, Depends, Query
 from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlalchemy.orm import Session
 
 from app.db.session import get_db
-from app.schemas.receita import ReceitaResponse
-from app.services.receita import buscar_receitas, listar_categorias
 from app.schemas.receita import ReceitaCreate, ReceitaDetalheResponse, ReceitaResponse
 from app.services.receita import (
     buscar_receitas,
