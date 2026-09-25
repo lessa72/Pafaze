@@ -76,3 +76,26 @@ def test_ordenar_receitas_por_avaliacao(client):
     assert res[1]["media_avaliacao"] == 3.5
     assert res[2]["media_avaliacao"] == 0.0
 
+
+def test_cadastrar_receita_sucesso_e_detalhes(client):
+    payload = {
+        "nome": "Torta de Maçã",
+        "categoria": "Sobremesa",
+        "modo_preparo": "Asse por 40 min",
+        "usuario_id": 1,
+        "ingredientes": [
+            {"nome": "Maçã", "quantidade": "3 unidades"},
+            {"nome": "Farinha", "quantidade": "200g"},
+        ],
+    }
+    res = client.post("/api/receitas", json=payload)
+    assert res.status_code == 201
+    dados = res.json()
+    assert dados["nome"] == "Torta de Maçã"
+    assert len(dados["ingredientes"]) == 2
+
+    res_detalhe = client.get(f"/api/receitas/{dados['id']}")
+    assert res_detalhe.status_code == 200
+    assert res_detalhe.json()["categoria"] == "Sobremesa"
+
+
