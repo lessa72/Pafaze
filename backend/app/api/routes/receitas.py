@@ -1,9 +1,22 @@
-from fastapi import APIRouter, Depends, Query
+from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlalchemy.orm import Session
 
 from app.db.session import get_db
-from app.schemas.receita import ReceitaResponse
-from app.services.receita import buscar_receitas, listar_categorias
+from app.schemas.receita import ReceitaCreate, ReceitaDetalheResponse, ReceitaResponse
+from app.schemas.receita import (
+    AvaliacaoCreate,
+    AvaliacaoResponse,
+    ReceitaCreate,
+    ReceitaDetalheResponse,
+    ReceitaResponse,
+)
+from app.services.receita import (
+    avaliar_receita,
+    buscar_receitas,
+    criar_receita,
+    listar_categorias,
+    obter_receita_por_id,
+)
 
 router = APIRouter(prefix="/receitas", tags=["receitas"])
 
@@ -33,3 +46,32 @@ def pesquisar_receitas(
 def obter_categorias(db: Session = Depends(get_db)):
     """Retorna as categorias distintas cadastradas para alimentar o filtro (US03)."""
     return listar_categorias(db=db)
+
+
+@router.post("", response_model=ReceitaDetalheResponse, status_code=status.HTTP_201_CREATED)
+def cadastrar_receita(dados: ReceitaCreate, db: Session = Depends(get_db)):
+    """Cadastra uma nova receita com ingredientes (US02)."""
+    try:
+        return criar_receita(db=db, dados=dados)
+    except ValueError as e:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(e))
+
+
+@router.get("/{id}", response_model=ReceitaDetalheResponse)
+def detalhar_receita(id: int, db: Session = Depends(get_db)):
+    """Retorna os detalhes de uma receita por ID (US02)."""
+    receita = obter_receita_por_id(db=db, receita_id=id)
+    if not receita:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Receita não encontrada.")
+    return receita
+
+
+@router.post("/{id}/avaliacoes", response_model=AvaliacaoResponse, status_code=status.HTTP_201_CREATED)
+def atribuir_avaliacao(id: int, dados: AvaliacaoCreate, db: Session = Depends(get_db)):
+    """Atribui avaliação a uma receita (US04)."""
+    try:
+        return avaliar_receita(db=db, receita_id=id, dados=dados)
+    except ValueError as e:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(e))
+
+

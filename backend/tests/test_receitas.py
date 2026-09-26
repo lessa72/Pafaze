@@ -76,3 +76,43 @@ def test_ordenar_receitas_por_avaliacao(client):
     assert res[1]["media_avaliacao"] == 3.5
     assert res[2]["media_avaliacao"] == 0.0
 
+
+def test_cadastrar_receita_sucesso_e_detalhes(client):
+    payload = {
+        "nome": "Torta de Maçã",
+        "categoria": "Sobremesa",
+        "modo_preparo": "Asse por 40 min",
+        "usuario_id": 1,
+        "ingredientes": [
+            {"nome": "Maçã", "quantidade": "3 unidades"},
+            {"nome": "Farinha", "quantidade": "200g"},
+        ],
+    }
+    res = client.post("/api/receitas", json=payload)
+    assert res.status_code == 201
+    dados = res.json()
+    assert dados["nome"] == "Torta de Maçã"
+    assert len(dados["ingredientes"]) == 2
+
+    res_detalhe = client.get(f"/api/receitas/{dados['id']}")
+    assert res_detalhe.status_code == 200
+    assert res_detalhe.json()["categoria"] == "Sobremesa"
+
+
+def test_avaliar_receita(client):
+    # US04: atribui avaliação com sucesso
+    res = client.post("/api/receitas/3/avaliacoes", json={"usuario_id": 1, "nota": 4})
+    assert res.status_code == 201
+    assert res.json()["nota"] == 4
+
+    # US04: validação de nota fora do intervalo 1 a 5
+    res_invalida = client.post("/api/receitas/3/avaliacoes", json={"usuario_id": 1, "nota": 6})
+    assert res_invalida.status_code == 422
+
+    # Verifica recálculo da nota média na receita
+    res_detalhe = client.get("/api/receitas/3")
+    assert res_detalhe.json()["media_avaliacao"] == 4.0
+    assert res_detalhe.json()["total_avaliacoes"] == 1
+
+
+
