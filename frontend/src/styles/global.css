@@ -47,3 +47,24 @@ textarea { min-height: 80px; resize: vertical; }
 .home { width: min(720px, calc(100% - 32px)); margin: 0 auto; padding: 48px 0; }
 .eyebrow { font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; }
 .status { display: inline-block; margin-top: 24px; padding: 8px 12px; border: 1px solid currentColor; border-radius: 999px; }
+
+nav.side {
+  width: 220px; flex: none; background: var(--sidebar); color: var(--sidebar-ink); padding: 24px 16px;
+  display: flex; flex-direction: column; gap: 4px; position: sticky; top: 0; height: 100vh;
+}
+.brand { font-size: 22px; font-weight: 600; margin: 0 0 22px 4px; display: flex; align-items: center; gap: 9px; color: var(--sidebar-ink); }
+.brand-mark svg { width: 21px; height: 21px; fill: none; stroke: var(--saffron); stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.brand .word span { color: var(--saffron); }
+nav.side a {
+  all: unset; cursor: pointer; padding: 10px 12px; border-radius: 8px; font-size: 14px;
+  color: var(--sidebar-ink); opacity: .72; transition: background .15s, opacity .15s;
+  display: flex; align-items: center; gap: 12px;
+}
+nav.side a:hover { background: rgba(255,255,255,.07); opacity: 1; }
+nav.side a.active { background: rgba(225,74,50,.2); opacity: 1; font-weight: 600; color: #fff; }
+nav.side .ic { width: 20px; height: 20px; display: flex; align-items: center; justify-content: center; }
+nav.side .ic svg { width: 19px; height: 19px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+@media (max-width: 720px) {
+  nav.side { width: 68px; padding: 20px 8px; align-items: center; }
+  nav.side .txt, nav.side .word { display: none; }
+}
