@@ -15,8 +15,9 @@ export function AuthProvider({ children }) {
     try {
       const dados = await apiFetch("/api/usuarios");
       setTodosUsuarios(dados);
-      // Se não há usuário ativo mas há usuários cadastrados, selecionar o primeiro por conveniência
-      if (!usuarioAtivo && dados.length > 0) {
+      if (usuarioAtivo && !dados.some((u) => u.id === usuarioAtivo.id)) {
+        definirUsuarioAtivo(dados.length > 0 ? dados[0] : null);
+      } else if (!usuarioAtivo && dados.length > 0) {
         definirUsuarioAtivo(dados[0]);
       }
     } catch {
