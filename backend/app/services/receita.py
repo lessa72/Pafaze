@@ -1,6 +1,6 @@
 from sqlalchemy import func
 from sqlalchemy.orm import Session
-
+from app.schemas.compatibilidade import ReceitaCompatibilidadeResponse
 from app.models.avaliacao import Avaliacao
 from app.models.ingrediente import Ingrediente
 from app.models.receita import Receita
@@ -179,5 +179,50 @@ def avaliar_receita(db: Session, receita_id: int, dados: AvaliacaoCreate) -> Ava
         nota=avaliacao.nota,
     )
 
+def buscar_receitas_por_ingredientes(
+    db: Session,
+    ingredientes_disponiveis: list[str],
+) -> list[ReceitaCompatibilidadeResponse]:
+    nomes_disponiveis = {
+        nome.strip().lower()
+        for nome in ingredientes_disponiveis
+        if nome.strip()
+    }
 
+    receitas = db.query(Receita).all()
+    resultados = []
+
+    for receita in receitas:
+        nomes_receita = {
+            ri.ingrediente.nome.strip().lower()
+            for ri in receita.ingredientes
+        }
+
+        disponiveis = len(nomes_receita & nomes_disponiveis)
+        total = len(nomes_receita)
+
+        resultados.append(
+            ReceitaCompatibilidadeResponse(
+                id=receita.id,
+                nome=receita.nome,
+                categoria=receita.categoria,
+                modo_preparo=receita.modo_preparo,
+                usuario_id=receita.usuario_id,
+                media_avaliacao=0.0,
+                total_avaliacoes=0,
+                ingredientes_disponiveis=disponiveis,
+                total_ingredientes=total,
+                ingredientes_faltantes=total - disponiveis,
+            )
+        )
+
+    resultados.sort(
+        key=lambda receita: (
+            -receita.ingredientes_disponiveis,
+            receita.ingredientes_faltantes,
+            receita.nome.lower(),
+        )
+    )
+
+    return resultados
 

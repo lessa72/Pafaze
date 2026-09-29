@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlalchemy.orm import Session
-
+from app.schemas.compatibilidade import ReceitaCompatibilidadeResponse
 from app.db.session import get_db
 from app.schemas.receita import ReceitaCreate, ReceitaDetalheResponse, ReceitaResponse
 from app.schemas.receita import (
@@ -13,6 +13,7 @@ from app.schemas.receita import (
 from app.services.receita import (
     avaliar_receita,
     buscar_receitas,
+    buscar_receitas_por_ingredientes,
     criar_receita,
     listar_categorias,
     obter_receita_por_id,
@@ -56,6 +57,22 @@ def cadastrar_receita(dados: ReceitaCreate, db: Session = Depends(get_db)):
     except ValueError as e:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(e))
 
+@router.get(
+    "/compatibilidade",
+    response_model=list[ReceitaCompatibilidadeResponse],
+)
+def pesquisar_por_ingredientes(
+    ingredientes: list[str] = Query(
+        ...,
+        description="Ingredientes disponíveis pelo usuário",
+    ),
+    db: Session = Depends(get_db),
+):
+    """Retorna receitas ordenadas pela quantidade de ingredientes disponíveis (US07)."""
+    return buscar_receitas_por_ingredientes(
+        db=db,
+        ingredientes_disponiveis=ingredientes,
+    )
 
 @router.get("/{id}", response_model=ReceitaDetalheResponse)
 def detalhar_receita(id: int, db: Session = Depends(get_db)):
