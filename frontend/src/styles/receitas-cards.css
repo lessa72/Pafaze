@@ -1,0 +1,89 @@
+.receita-card-item {
+  background: var(--bg-card, #ffffff);
+  border: 1px solid var(--border-color, #e7e2da);
+  border-radius: var(--radius-md, 12px);
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  box-shadow: var(--shadow-sm, 0 1px 3px rgba(0, 0, 0, 0.05));
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.receita-card-item:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md, 0 4px 14px rgba(0, 0, 0, 0.07));
+}
+.receita-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 12px;
+  flex-wrap: wrap;
+}
+.receita-categoria-badge {
+  display: inline-block;
+  background: var(--primary-light, #ffede8);
+  color: var(--primary, #d94e28);
+  font-size: 0.78rem;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 999px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+.estrelas-pontuacao {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.85rem;
+}
+.estrelas-icones {
+  color: #f59e0b;
+  letter-spacing: 1px;
+}
+.estrela-icone.vazia {
+  color: #d1d5db;
+}
+.estrelas-texto {
+  color: var(--text-main, #262220);
+}
+.estrelas-sem-avaliacao {
+  color: var(--text-muted, #6b635b);
+  font-style: italic;
+  font-size: 0.8rem;
+}
+.receita-card-titulo {
+  font-size: 1.15rem;
+  margin-bottom: 8px;
+  line-height: 1.35;
+}
+.receita-card-link {
+  color: var(--text-main, #262220);
+}
+.receita-card-link:hover {
+  color: var(--primary, #d94e28);
+}
+.receita-card-descricao {
+  color: var(--text-muted, #6b635b);
+  font-size: 0.88rem;
+  line-height: 1.5;
+  margin-bottom: 16px;
+  flex: 1;
+}
+.receita-card-footer {
+  margin-top: auto;
+  padding-top: 12px;
+  border-top: 1px solid var(--border-color, #e7e2da);
+}
+.receita-card-botao {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--primary, #d94e28);
+}
+.receita-card-botao:hover {
+  color: var(--primary-hover, #bf3f1b);
+}
