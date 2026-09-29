@@ -14,7 +14,7 @@ export default function CadastroReceita() {
   const [salvando, setSalvando] = useState(false);
 
   function adicionarIngrediente(e) {
-    e.preventDefault();
+    if (e) e.preventDefault();
     if (ingNome.trim() && ingQtd.trim()) {
       setIngredientes([...ingredientes, { nome: ingNome.trim(), quantidade: ingQtd.trim() }]);
       setIngNome("");
@@ -24,8 +24,15 @@ export default function CadastroReceita() {
 
   async function handleSubmit(e) {
     e.preventDefault();
-    if (!nome.trim() || !modoPreparo.trim() || ingredientes.length === 0) {
-      setErro("Preencha todos os campos e adicione pelo menos um ingrediente.");
+    let lista = [...ingredientes];
+    if (ingNome.trim() && ingQtd.trim()) {
+      lista.push({ nome: ingNome.trim(), quantidade: ingQtd.trim() });
+      setIngredientes(lista);
+      setIngNome("");
+      setIngQtd("");
+    }
+    if (!nome.trim() || !modoPreparo.trim() || lista.length === 0) {
+      setErro("Preencha todos os campos e clique no botão '+' para adicionar o ingrediente.");
       return;
     }
     try {
@@ -33,11 +40,11 @@ export default function CadastroReceita() {
       setErro("");
       const receita = await apiFetch("/api/receitas", {
         method: "POST",
-        body: JSON.stringify({ nome: nome.trim(), categoria, modo_preparo: modoPreparo.trim(), usuario_id: 1, ingredientes }),
+        body: JSON.stringify({ nome: nome.trim(), categoria, modo_preparo: modoPreparo.trim(), usuario_id: 1, ingredientes: lista }),
       });
       navigate(`/receitas/${receita.id}`);
-    } catch {
-      setErro("Erro ao publicar receita. Verifique se o backend está rodando.");
+    } catch (err) {
+      setErro(err.message || "Erro ao publicar receita. Verifique se o backend está rodando.");
     } finally {
       setSalvando(false);
     }
@@ -58,11 +65,11 @@ export default function CadastroReceita() {
 
         <label>Ingredientes</label>
         <div style={{ display: "flex", gap: "8px", marginBottom: "8px" }}>
-          <input value={ingNome} onChange={(e) => setIngNome(e.target.value)} placeholder="Nome (ex: Ovo)" />
-          <input value={ingQtd} onChange={(e) => setIngQtd(e.target.value)} placeholder="Qtd (ex: 2 unidades)" style={{ width: "160px" }} />
+          <input value={ingNome} onChange={(e) => setIngNome(e.target.value)} placeholder="Nome (ex: Ovo)" onKeyDown={(e) => e.key === "Enter" && adicionarIngrediente(e)} />
+          <input value={ingQtd} onChange={(e) => setIngQtd(e.target.value)} placeholder="Qtd (ex: 2 unidades)" style={{ width: "160px" }} onKeyDown={(e) => e.key === "Enter" && adicionarIngrediente(e)} />
           <button type="button" className="btn ghost" onClick={adicionarIngrediente}>+</button>
         </div>
-        <div>
+        <div style={{ marginBottom: "12px" }}>
           {ingredientes.map((ing, i) => (
             <span key={i} className="ing-tag">
               {ing.quantidade} {ing.nome}

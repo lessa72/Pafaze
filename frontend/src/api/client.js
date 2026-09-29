@@ -1,13 +1,19 @@
-const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8000";
+const API_URL = import.meta.env.VITE_API_URL || "";
 
 export async function apiFetch(path, options = {}) {
-  const response = await fetch(`${API_URL}${path}`, {
+  const url = `${API_URL}${path}`;
+  const response = await fetch(url, {
     headers: { "Content-Type": "application/json", ...options.headers },
     ...options,
   });
 
   if (!response.ok) {
-    throw new Error(`Erro ${response.status} ao acessar a API`);
+    let msg = `Erro ${response.status} ao acessar a API`;
+    try {
+      const err = await response.json();
+      if (err?.detail) msg = err.detail;
+    } catch {}
+    throw new Error(msg);
   }
 
   return response.json();
