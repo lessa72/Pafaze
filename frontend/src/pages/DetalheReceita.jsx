@@ -10,20 +10,20 @@ export default function DetalheReceita() {
   const [carregando, setCarregando] = useState(true);
   const [erro, setErro] = useState("");
 
-  async function carregarReceita() {
+  async function carregarReceita(mostrarCarregando = false) {
     try {
-      setCarregando(true);
+      if (mostrarCarregando === true) setCarregando(true);
       const dados = await apiFetch(`/api/receitas/${id}`);
       setReceita(dados);
     } catch {
       setErro("Receita não encontrada ou erro no servidor.");
     } finally {
-      setCarregando(false);
+      if (mostrarCarregando === true) setCarregando(false);
     }
   }
 
   useEffect(() => {
-    carregarReceita();
+    carregarReceita(true);
   }, [id]);
 
   if (carregando) return <p className="meta" style={{ padding: "24px" }}>Carregando receita...</p>;
@@ -48,7 +48,7 @@ export default function DetalheReceita() {
         <div className="section-title">Modo de preparo</div>
         <p style={{ fontSize: "14px", lineHeight: "1.6" }}>{receita.modo_preparo}</p>
 
-        <AvaliacaoEstrelas receitaId={receita.id} onAvaliado={carregarReceita} />
+        <AvaliacaoEstrelas receitaId={receita.id} onAvaliado={() => carregarReceita(false)} />
       </div>
 
       <div className="card" style={{ marginTop: "24px" }}>
