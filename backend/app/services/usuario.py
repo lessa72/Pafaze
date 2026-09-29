@@ -1,3 +1,4 @@
+from sqlalchemy import or_
 from sqlalchemy.orm import Session
 
 from app.core.security import gerar_hash_senha
@@ -32,3 +33,17 @@ def obter_usuario_por_email(db: Session, email: str) -> Usuario | None:
 
 def obter_usuario_por_id(db: Session, usuario_id: int) -> Usuario | None:
     return db.query(Usuario).filter(Usuario.id == usuario_id).first()
+
+
+def listar_usuarios(db: Session, q: str | None = None) -> list[Usuario]:
+    query = db.query(Usuario)
+    if q:
+        termo = f"%{q.strip().lower()}%"
+        query = query.filter(
+            or_(
+                Usuario.nome.ilike(termo),
+                Usuario.email.ilike(termo),
+            )
+        )
+    return query.all()
+

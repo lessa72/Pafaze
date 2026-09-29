@@ -79,3 +79,22 @@ def test_aceitar_listar_e_remover_amigo(client):
     res_del = client.delete("/api/usuarios/1/amigos/2")
     assert res_del.status_code == 204
     assert len(client.get("/api/usuarios/1/amigos").json()) == 0
+
+
+def test_listar_e_obter_usuarios(client):
+    # Listar todos os usuários
+    res = client.get("/api/usuarios")
+    assert res.status_code == 200
+    assert len(res.json()) == 3
+
+    # Buscar por nome ou email
+    res_busca = client.get("/api/usuarios?q=alice")
+    assert res_busca.status_code == 200
+    assert len(res_busca.json()) == 1
+    assert res_busca.json()[0]["nome"] == "Alice"
+
+    # Obter por ID
+    res_id = client.get("/api/usuarios/1")
+    assert res_id.status_code == 200
+    assert res_id.json()["email"] == "alice@test.com"
+

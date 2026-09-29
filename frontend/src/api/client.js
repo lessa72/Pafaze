@@ -8,12 +8,21 @@ export async function apiFetch(path, options = {}) {
   });
 
   if (!response.ok) {
-    let msg = `Erro ${response.status} ao acessar a API`;
+    let errorDetail = `Erro ${response.status} ao acessar a API`;
     try {
-      const err = await response.json();
-      if (err?.detail) msg = err.detail;
-    } catch {}
-    throw new Error(msg);
+      const errorJson = await response.json();
+      if (errorJson && errorJson.detail) {
+        errorDetail =
+          typeof errorJson.detail === "string"
+            ? errorJson.detail
+            : JSON.stringify(errorJson.detail);
+      }
+    } catch {
+      // response body was not json
+    }
+    const error = new Error(errorDetail);
+    error.status = response.status;
+    throw error;
   }
 
   return response.json();
