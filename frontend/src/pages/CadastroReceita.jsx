@@ -7,34 +7,28 @@ export default function CadastroReceita() {
   const [nome, setNome] = useState("");
   const [categoria, setCategoria] = useState("Café da manhã");
   const [modoPreparo, setModoPreparo] = useState("");
-  const [ingNome, setIngNome] = useState("");
-  const [ingQtd, setIngQtd] = useState("");
-  const [ingredientes, setIngredientes] = useState([]);
+  const [ingredientes, setIngredientes] = useState([
+    { nome: "", quantidade: "" },
+    { nome: "", quantidade: "" },
+  ]);
   const [erro, setErro] = useState("");
   const [salvando, setSalvando] = useState(false);
 
-  function adicionarIngrediente(e) {
-    if (e) e.preventDefault();
-    if (ingNome.trim() && ingQtd.trim()) {
-      setIngredientes([...ingredientes, { nome: ingNome.trim(), quantidade: ingQtd.trim() }]);
-      setIngNome("");
-      setIngQtd("");
-    }
+  function atualizar(index, campo, valor) {
+    setIngredientes((itens) => itens.map((item, i) => (i === index ? { ...item, [campo]: valor } : item)));
   }
 
   async function handleSubmit(e) {
     e.preventDefault();
-    let lista = [...ingredientes];
-    if (ingNome.trim() && ingQtd.trim()) {
-      lista.push({ nome: ingNome.trim(), quantidade: ingQtd.trim() });
-      setIngredientes(lista);
-      setIngNome("");
-      setIngQtd("");
-    }
+    const lista = ingredientes
+      .map((i) => ({ nome: i.nome.trim(), quantidade: i.quantidade.trim() }))
+      .filter((i) => i.nome && i.quantidade);
+
     if (!nome.trim() || !modoPreparo.trim() || lista.length === 0) {
-      setErro("Preencha todos os campos e clique no botão '+' para adicionar o ingrediente.");
+      setErro("Preencha o nome, modo de preparo e pelo menos um ingrediente (nome e quantidade).");
       return;
     }
+
     try {
       setSalvando(true);
       setErro("");
@@ -64,18 +58,42 @@ export default function CadastroReceita() {
         </select>
 
         <label>Ingredientes</label>
-        <div style={{ display: "flex", gap: "8px", marginBottom: "8px" }}>
-          <input value={ingNome} onChange={(e) => setIngNome(e.target.value)} placeholder="Nome (ex: Ovo)" onKeyDown={(e) => e.key === "Enter" && adicionarIngrediente(e)} />
-          <input value={ingQtd} onChange={(e) => setIngQtd(e.target.value)} placeholder="Qtd (ex: 2 unidades)" style={{ width: "160px" }} onKeyDown={(e) => e.key === "Enter" && adicionarIngrediente(e)} />
-          <button type="button" className="btn ghost" onClick={adicionarIngrediente}>+</button>
-        </div>
-        <div style={{ marginBottom: "12px" }}>
+        <div style={{ display: "flex", flexDirection: "column", gap: "8px", marginBottom: "16px" }}>
           {ingredientes.map((ing, i) => (
-            <span key={i} className="ing-tag">
-              {ing.quantidade} {ing.nome}
-              <button type="button" onClick={() => setIngredientes(ingredientes.filter((_, idx) => idx !== i))}>✕</button>
-            </span>
+            <div key={i} style={{ display: "flex", gap: "8px", alignItems: "center" }}>
+              <input
+                value={ing.nome}
+                onChange={(e) => atualizar(i, "nome", e.target.value)}
+                placeholder="Ingrediente (ex: Ovo)"
+                style={{ flex: 1 }}
+              />
+              <input
+                value={ing.quantidade}
+                onChange={(e) => atualizar(i, "quantidade", e.target.value)}
+                placeholder="Qtd (ex: 2 unidades)"
+                style={{ width: "150px", flex: "none" }}
+              />
+              {ingredientes.length > 1 && (
+                <button
+                  type="button"
+                  className="btn ghost"
+                  style={{ padding: "8px 12px", border: "none", color: "var(--olive-dk)", cursor: "pointer" }}
+                  onClick={() => setIngredientes((itens) => itens.filter((_, idx) => idx !== i))}
+                  title="Remover ingrediente"
+                >
+                  ✕
+                </button>
+              )}
+            </div>
           ))}
+          <button
+            type="button"
+            className="btn ghost"
+            onClick={() => setIngredientes((itens) => [...itens, { nome: "", quantidade: "" }])}
+            style={{ alignSelf: "flex-start", marginTop: "4px", fontSize: "13px" }}
+          >
+            + Adicionar outro ingrediente
+          </button>
         </div>
 
         <label>Modo de preparo</label>
