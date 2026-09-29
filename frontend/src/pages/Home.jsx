@@ -31,11 +31,14 @@ export default function Home() {
         </p>
 
         <div className="hero-actions">
-          <Link to="/amigos" className="btn btn-primary btn-lg">
+          <Link to="/receitas" className="btn btn-primary btn-lg">
+            🔍 Explorar Receitas (US03 / US05)
+          </Link>
+          <Link to="/amigos" className="btn btn-secondary btn-lg">
             👥 Gerenciar Amigos (US08)
           </Link>
           <Link to="/cadastro" className="btn btn-secondary btn-lg">
-            {usuarioAtivo ? "👤 Alternar / Criar Usuário" : "✨ Criar Conta (US01)"}
+            {usuarioAtivo ? "👤 Alternar Usuário" : "✨ Criar Conta (US01)"}
           </Link>
         </div>
 
@@ -70,13 +73,13 @@ export default function Home() {
 
         <div className="card feature-card">
           <span className="feature-icon">🍲</span>
-          <h3>Receitas Cadastradas</h3>
+          <h3>Pesquisar & Avaliar (US03 e US05)</h3>
           <p>
-            {receitas.length > 0
-              ? `${receitas.length} receitas disponíveis para preparo e avaliação.`
-              : "Cadastre e descubra receitas deliciosas."}
+            Pesquise pelo nome, filtre por categoria e ordene pelas receitas mais bem avaliadas da plataforma.
           </p>
-          <span className="card-hint">Total: {receitas.length} receitas</span>
+          <Link to="/receitas" className="card-link">
+            Explorar {receitas.length} receitas &rarr;
+          </Link>
         </div>
       </section>
     </main>
