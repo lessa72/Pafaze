@@ -7,7 +7,7 @@ import CadastroUsuario from "../pages/CadastroUsuario";
 import DetalheReceita from "../pages/DetalheReceita";
 import ExplorarReceitas from "../pages/ExplorarReceitas";
 import Home from "../pages/Home";
-
+import BuscaPorIngredientes from "../pages/BuscaPorIngredientes";
 export default function AppRoutes() {
   return (
     <AuthProvider>
@@ -25,6 +25,10 @@ export default function AppRoutes() {
                 <CadastroReceita />
               </div>
             }
+          />
+          <Route
+            path="/receitas/ingredientes"
+            element={<BuscaPorIngredientes />}
           />
           <Route
             path="/receitas/:id"

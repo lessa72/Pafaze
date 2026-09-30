@@ -27,6 +27,14 @@ export default function Header() {
             🔍 Explorar Receitas
           </Link>
           <Link
+  to="/receitas/ingredientes"
+  className={`nav-link ${
+    location.pathname === "/receitas/ingredientes" ? "active" : ""
+  }`}
+>
+  🥕 Tenho ingredientes
+</Link>
+          <Link
             to="/receitas/nova"
             className={`nav-link ${location.pathname === "/receitas/nova" ? "active" : ""}`}
           >
