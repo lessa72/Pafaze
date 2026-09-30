@@ -177,7 +177,7 @@ classDiagram
         +String nome
         +float quantidade
     }
-    os
+
     class Avaliacao {
         +int id
         +int nota
@@ -195,4 +195,29 @@ classDiagram
     Receita "1" -- "*" Ingrediente : possui >
     Receita "1" -- "*" Avaliacao : recebe >
     Receita "1" -- "*" Comentario : possui >
+```
+
+### Diagrama de Sequência (Publicação e Avaliação de Receita)
+
+```mermaid
+sequenceDiagram
+    autonumber
+    actor Usuario as Usuário
+    participant Frontend as Frontend (React)
+    participant API as Backend (FastAPI)
+    participant DB as Banco de Dados (SQLite)
+
+    Usuario->>Frontend: Preenche formulário e clica em "Publicar"
+    Frontend->>API: POST /api/receitas (JSON)
+    API->>DB: Salva receita e ingredientes
+    DB-->>API: Confirma persistência
+    API-->>Frontend: Retorna detalhes da receita criada
+    Frontend-->>Usuario: Redireciona para /receitas/{id}
+
+    Usuario->>Frontend: Clica nas estrelas de avaliação
+    Frontend->>API: POST /api/receitas/{id}/avaliacoes
+    API->>DB: Registra/atualiza nota do usuário
+    DB-->>API: Confirma persistência
+    API-->>Frontend: Retorna dados da avaliação
+    Frontend-->>Usuario: Atualiza estrelas e recálculo da média
 ```
