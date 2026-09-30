@@ -51,11 +51,18 @@ export default function Header() {
             <span>Amigos</span>
           </Link>
           <Link
+            to="/login"
+            className={`nav-link ${location.pathname === "/login" ? "active" : ""}`}
+          >
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>
+            <span>Entrar</span>
+          </Link>
+          <Link
             to="/cadastro"
             className={`nav-link ${location.pathname === "/cadastro" ? "active" : ""}`}
           >
-            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M13 4h4a1 1 0 0 1 1 1v14a1 1 0 0 1-1 1h-4"/><path d="M3 12h12"/><path d="M11 7l5 5-5 5"/></svg>
-            <span>Conta</span>
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="20" y1="8" x2="20" y2="14"/><line x1="23" y1="11" x2="17" y2="11"/></svg>
+            <span>Cadastrar</span>
           </Link>
         </nav>
 
@@ -87,7 +94,7 @@ export default function Header() {
               </div>
             </div>
           ) : (
-            <Link to="/cadastro" className="btn-login-prompt">
+            <Link to="/login" className="btn-login-prompt">
               Entrar
             </Link>
           )}

@@ -4,9 +4,10 @@ import FormCadastro from "../components/usuarios/FormCadastro";
 import { useAuth } from "../context/AuthContext";
 
 export default function CadastroUsuario() {
-  const { cadastrarUsuario, todosUsuarios, definirUsuarioAtivo, usuarioAtivo } = useAuth();
+  const { cadastrarUsuario, loginUsuario, todosUsuarios, definirUsuarioAtivo, usuarioAtivo } = useAuth();
   const navigate = useNavigate();
 
+  const [modo, setModo] = useState("cadastro"); // "cadastro" | "login"
   const [nome, setNome] = useState("");
   const [email, setEmail] = useState("");
   const [senha, setSenha] = useState("");
@@ -20,18 +21,22 @@ export default function CadastroUsuario() {
     setErro("");
     setSucesso(false);
 
-    if (nome.trim().length < 2) return setErro("O nome deve ter pelo menos 2 caracteres.");
+    if (modo === "cadastro" && nome.trim().length < 2) return setErro("O nome deve ter pelo menos 2 caracteres.");
     if (!email.includes("@") || !email.includes(".")) return setErro("Insira um e-mail válido.");
-    if (senha.length < 6) return setErro("A senha deve ter no mínimo 6 caracteres.");
-    if (senha !== confirmaSenha) return setErro("As senhas não coincidem.");
+    if (modo === "cadastro" && senha.length < 6) return setErro("A senha deve ter no mínimo 6 caracteres.");
+    if (modo === "cadastro" && senha !== confirmaSenha) return setErro("As senhas não coincidem.");
 
     try {
       setCarregando(true);
-      await cadastrarUsuario({ nome: nome.trim(), email: email.trim().toLowerCase(), senha });
+      if (modo === "cadastro") {
+        await cadastrarUsuario({ nome: nome.trim(), email: email.trim().toLowerCase(), senha });
+      } else {
+        await loginUsuario({ email: email.trim().toLowerCase(), senha });
+      }
       setSucesso(true);
-      setTimeout(() => navigate("/amigos"), 1500);
+      setTimeout(() => navigate("/amigos"), 1000);
     } catch (err) {
-      setErro(err.message || "Erro ao criar conta.");
+      setErro(err.message || (modo === "cadastro" ? "Erro ao criar conta." : "Erro ao entrar."));
     } finally {
       setCarregando(false);
     }
@@ -41,15 +46,41 @@ export default function CadastroUsuario() {
     <div className="page-container">
       <div className="card form-card">
         <div className="form-header">
-          <span className="form-badge">US01 — Criar Conta</span>
-          <h1>Cadastre-se no Pafazê</h1>
-          <p className="form-subtitle">Crie sua conta para compartilhar receitas e interagir com amigos!</p>
+          <span className="form-badge">Autenticação & Contas</span>
+          <h1>{modo === "cadastro" ? "Cadastre-se no Pafazê" : "Entrar no Pafazê"}</h1>
+          <p className="form-subtitle">
+            {modo === "cadastro"
+              ? "Crie sua conta para compartilhar receitas e fazer amigos!"
+              : "Acesse sua conta com e-mail e senha cadastrados."}
+          </p>
+        </div>
+
+        <div className="tabs-container" style={{ marginBottom: "20px" }}>
+          <button
+            type="button"
+            className={`tab-button ${modo === "cadastro" ? "active" : ""}`}
+            onClick={() => { setModo("cadastro"); setErro(""); }}
+          >
+            Cadastrar
+          </button>
+          <button
+            type="button"
+            className={`tab-button ${modo === "login" ? "active" : ""}`}
+            onClick={() => { setModo("login"); setErro(""); }}
+          >
+            Entrar com Senha
+          </button>
         </div>
 
         {erro && <div className="alert alert-error" role="alert"><span>⚠️</span> {erro}</div>}
-        {sucesso && <div className="alert alert-success" role="alert"><span>🎉</span> Conta criada com sucesso!</div>}
+        {sucesso && (
+          <div className="alert alert-success" role="alert">
+            <span>🎉</span> {modo === "cadastro" ? "Conta criada com sucesso!" : "Login realizado com sucesso!"}
+          </div>
+        )}
 
         <FormCadastro
+          modo={modo}
           nome={nome} setNome={setNome}
           email={email} setEmail={setEmail}
           senha={senha} setSenha={setSenha}
