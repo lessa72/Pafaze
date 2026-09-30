@@ -5,6 +5,7 @@ import Amigos from "../pages/Amigos";
 import CadastroReceita from "../pages/CadastroReceita";
 import CadastroUsuario from "../pages/CadastroUsuario";
 import DetalheReceita from "../pages/DetalheReceita";
+import ExplorarReceitas from "../pages/ExplorarReceitas";
 import Home from "../pages/Home";
 
 export default function AppRoutes() {
@@ -14,6 +15,7 @@ export default function AppRoutes() {
         <Header />
         <Routes>
           <Route path="/" element={<Home />} />
+          <Route path="/receitas" element={<ExplorarReceitas />} />
           <Route path="/cadastro" element={<CadastroUsuario />} />
           <Route path="/amigos" element={<Amigos />} />
           <Route

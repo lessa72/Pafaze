@@ -21,6 +21,12 @@ export default function Header() {
             Início
           </Link>
           <Link
+            to="/receitas"
+            className={`nav-link ${location.pathname === "/receitas" ? "active" : ""}`}
+          >
+            🔍 Explorar Receitas
+          </Link>
+          <Link
             to="/receitas/nova"
             className={`nav-link ${location.pathname === "/receitas/nova" ? "active" : ""}`}
           >

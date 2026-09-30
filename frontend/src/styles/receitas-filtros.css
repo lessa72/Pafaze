@@ -1,0 +1,92 @@
+.barra-pesquisa-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+.barra-pesquisa-icone {
+  position: absolute;
+  left: 14px;
+  font-size: 1rem;
+  pointer-events: none;
+  opacity: 0.6;
+}
+.barra-pesquisa-input {
+  width: 100%;
+  padding: 12px 42px 12px 42px;
+  border: 1px solid var(--border-color, #e7e2da);
+  border-radius: var(--radius-md, 12px);
+  background: var(--bg-card, #ffffff);
+  font-size: 0.95rem;
+  color: var(--text-main, #262220);
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.barra-pesquisa-input:focus {
+  outline: none;
+  border-color: var(--primary, #d94e28);
+  box-shadow: 0 0 0 3px var(--primary-light, #ffede8);
+}
+.barra-pesquisa-limpar {
+  position: absolute;
+  right: 12px;
+  background: transparent;
+  border: none;
+  font-size: 1rem;
+  cursor: pointer;
+  color: var(--text-muted, #6b635b);
+  padding: 4px;
+}
+.barra-pesquisa-limpar:hover {
+  color: var(--danger, #ef4444);
+}
+.filtro-categoria-container {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+.filtro-categoria-pill {
+  border: 1px solid var(--border-color, #e7e2da);
+  background: var(--bg-card, #ffffff);
+  color: var(--text-muted, #6b635b);
+  padding: 6px 14px;
+  border-radius: 999px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.filtro-categoria-pill:hover {
+  border-color: var(--primary, #d94e28);
+  color: var(--primary, #d94e28);
+}
+.filtro-categoria-pill.ativa {
+  background: var(--primary, #d94e28);
+  border-color: var(--primary, #d94e28);
+  color: #ffffff;
+  font-weight: 600;
+}
+.ordenador-container {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.ordenador-label {
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--text-muted, #6b635b);
+  white-space: nowrap;
+}
+.ordenador-select {
+  padding: 8px 12px;
+  border: 1px solid var(--border-color, #e7e2da);
+  border-radius: var(--radius-sm, 6px);
+  background: var(--bg-card, #ffffff);
+  color: var(--text-main, #262220);
+  font-size: 0.88rem;
+  cursor: pointer;
+}
+.ordenador-select:focus {
+  outline: none;
+  border-color: var(--primary, #d94e28);
+}
