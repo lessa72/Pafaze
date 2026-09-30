@@ -68,3 +68,16 @@
 .btn-block {
   width: 100%;
 }
+
+.btn.ghost,
+.btn-ghost {
+  background: transparent;
+  border: 1px solid var(--border-color);
+  color: var(--text-main);
+}
+
+.btn.ghost:hover:not(:disabled),
+.btn-ghost:hover:not(:disabled) {
+  background: rgba(0, 0, 0, 0.04);
+  border-color: var(--text-muted);
+}
