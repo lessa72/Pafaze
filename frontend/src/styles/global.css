@@ -11,7 +11,7 @@
 @import "./amigos-requests.css";
 @import "./receitas-cards.css";
 @import "./receitas-filtros.css";
-
+@import "./ingredientes.css";
 /* Variáveis e utilitários complementares de receitas e ingredientes */
 :root {
   --olive: #3f6b4a;
