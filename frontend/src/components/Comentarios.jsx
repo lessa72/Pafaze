@@ -11,9 +11,7 @@ export default function Comentarios({ receitaId, usuarioId }) {
   useEffect(() => {
     async function carregarComentarios() {
       try {
-        const dados = await apiFetch(
-          `/api/receitas/${receitaId}/comentarios`
-        );
+        const dados = await apiFetch(`/api/receitas/${receitaId}/comentarios`);
         setComentarios(dados);
       } catch {
         setErro("Não foi possível carregar os comentários.");
@@ -36,16 +34,13 @@ export default function Comentarios({ receitaId, usuarioId }) {
       setEnviando(true);
       setErro("");
 
-      const comentario = await apiFetch(
-        `/api/receitas/${receitaId}/comentarios`,
-        {
-          method: "POST",
-          body: JSON.stringify({
-            usuario_id: usuarioId,
-            texto: texto.trim(),
-          }),
-        }
-      );
+      const comentario = await apiFetch(`/api/receitas/${receitaId}/comentarios`, {
+        method: "POST",
+        body: JSON.stringify({
+          usuario_id: usuarioId,
+          texto: texto.trim(),
+        }),
+      });
 
       setComentarios((anteriores) => [...anteriores, comentario]);
       setTexto("");
@@ -58,12 +53,14 @@ export default function Comentarios({ receitaId, usuarioId }) {
 
   return (
     <section className="comentarios">
-      <h2>Comentários</h2>
+      <div className="section-title" style={{ marginTop: 0 }}>Comentários</div>
 
-      {carregando && <p>Carregando comentários...</p>}
+      {carregando && <p className="meta">Carregando comentários...</p>}
 
       {!carregando && comentarios.length === 0 && (
-        <p>Ainda não há comentários. Seja o primeiro!</p>
+        <p className="meta" style={{ fontStyle: "italic", margin: "8px 0" }}>
+          Ainda não há comentários. Seja o primeiro a compartilhar uma dica!
+        </p>
       )}
 
       {comentarios.map((comentario) => (
@@ -73,27 +70,30 @@ export default function Comentarios({ receitaId, usuarioId }) {
         </article>
       ))}
 
-      <form onSubmit={enviarComentario}>
-        <label htmlFor="texto-comentario">
-          Deixe seu comentário
-        </label>
+      <form onSubmit={enviarComentario} style={{ marginTop: "16px" }}>
+        <label htmlFor="texto-comentario">Deixe seu comentário ou dica</label>
 
         <textarea
           id="texto-comentario"
           value={texto}
           onChange={(event) => setTexto(event.target.value)}
-          placeholder="Compartilhe sua experiência ou uma dica..."
+          placeholder="Compartilhe sua experiência ou uma dica para esta receita..."
           maxLength={1000}
-          rows={4}
+          rows={3}
           disabled={enviando}
         />
 
-        <button type="submit" disabled={enviando || !texto.trim()}>
+        <button
+          type="submit"
+          className="btn btn-primary"
+          style={{ marginTop: "10px" }}
+          disabled={enviando || !texto.trim()}
+        >
           {enviando ? "Publicando..." : "Publicar comentário"}
         </button>
       </form>
 
-      {erro && <p role="alert">{erro}</p>}
+      {erro && <p role="alert" style={{ color: "var(--danger)", fontSize: "13px", marginTop: "8px" }}>{erro}</p>}
     </section>
   );
 }

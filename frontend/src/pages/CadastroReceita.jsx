@@ -45,9 +45,24 @@ export default function CadastroReceita() {
   }
 
   return (
-    <div className="card" style={{ maxWidth: "600px" }}>
-      <h2>Nova publicação</h2>
-      {erro && <p style={{ color: "var(--saffron)", fontSize: "13px" }}>{erro}</p>}
+    <div className="card form-card" style={{ maxWidth: "620px", margin: "0 auto" }}>
+      <div className="form-header" style={{ textAlign: "left", marginBottom: "20px" }}>
+        <span className="eyebrow">🍳 Nova publicação</span>
+        <h2 style={{ fontSize: "1.8rem", marginTop: "4px" }}>Compartilhe sua receita</h2>
+        <p className="meta" style={{ fontSize: "0.95rem", marginTop: "4px" }}>
+          Preencha os detalhes e ingredientes para que outros usuários possam preparar e avaliar.
+        </p>
+      </div>
+
+      <div className="upload-box">
+        <svg viewBox="0 0 24 24">
+          <path d="M4 8h3l1.3-2h7.4L17 8h3a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1z" />
+          <circle cx="12" cy="14" r="3.3" />
+        </svg>
+        <span>Adicionar foto da receita pronta (opcional)</span>
+      </div>
+
+      {erro && <div className="alert alert-error">{erro}</div>}
       <form onSubmit={handleSubmit}>
         <label>Nome da receita</label>
         <input value={nome} onChange={(e) => setNome(e.target.value)} placeholder="ex: Omelete de cebola e tomate" />
@@ -99,8 +114,8 @@ export default function CadastroReceita() {
         <label>Modo de preparo</label>
         <textarea value={modoPreparo} onChange={(e) => setModoPreparo(e.target.value)} placeholder="Descreva o passo a passo..." />
 
-        <button type="submit" className="btn" disabled={salvando} style={{ marginTop: "16px" }}>
-          {salvando ? "Publicando..." : "Publicar"}
+        <button type="submit" className="btn btn-primary btn-lg" disabled={salvando} style={{ marginTop: "20px", width: "100%" }}>
+          {salvando ? "Publicando..." : "Publicar receita"}
         </button>
       </form>
     </div>

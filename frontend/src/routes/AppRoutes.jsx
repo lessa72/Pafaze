@@ -8,14 +8,16 @@ import DetalheReceita from "../pages/DetalheReceita";
 import ExplorarReceitas from "../pages/ExplorarReceitas";
 import Home from "../pages/Home";
 import BuscaPorIngredientes from "../pages/BuscaPorIngredientes";
+
 export default function AppRoutes() {
   return (
     <AuthProvider>
       <BrowserRouter>
         <Header />
         <Routes>
-          <Route path="/" element={<Home />} />
+          <Route path="/" element={<ExplorarReceitas />} />
           <Route path="/receitas" element={<ExplorarReceitas />} />
+          <Route path="/sobre" element={<Home />} />
           <Route path="/cadastro" element={<CadastroUsuario />} />
           <Route path="/amigos" element={<Amigos />} />
           <Route
