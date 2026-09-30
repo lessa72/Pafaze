@@ -1,9 +1,18 @@
 from sqlalchemy import or_
 from sqlalchemy.orm import Session
 
-from app.core.security import gerar_hash_senha
+from app.core.security import gerar_hash_senha, verificar_senha
 from app.models.usuario import Usuario
 from app.schemas.usuario import UsuarioCreate
+
+
+def autenticar_usuario(db: Session, email: str, senha: str) -> Usuario | None:
+    usuario = obter_usuario_por_email(db, email)
+    if not usuario:
+        return None
+    if not verificar_senha(senha, usuario.senha_hash):
+        return None
+    return usuario
 
 
 def criar_usuario(db: Session, nome: str, email: str, senha_hash: str) -> Usuario:
