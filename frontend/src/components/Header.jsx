@@ -16,24 +16,18 @@ export default function Header() {
         <nav className="nav-links">
           <Link
             to="/"
-            className={`nav-link ${location.pathname === "/" ? "active" : ""}`}
-          >
-            Início
-          </Link>
-          <Link
-            to="/receitas"
-            className={`nav-link ${location.pathname === "/receitas" ? "active" : ""}`}
+            className={`nav-link ${location.pathname === "/" || location.pathname === "/receitas" ? "active" : ""}`}
           >
             🔍 Explorar Receitas
           </Link>
           <Link
-  to="/receitas/ingredientes"
-  className={`nav-link ${
-    location.pathname === "/receitas/ingredientes" ? "active" : ""
-  }`}
->
-  🥕 Tenho ingredientes
-</Link>
+            to="/receitas/ingredientes"
+            className={`nav-link ${
+              location.pathname === "/receitas/ingredientes" ? "active" : ""
+            }`}
+          >
+            🥕 Tenho ingredientes
+          </Link>
           <Link
             to="/receitas/nova"
             className={`nav-link ${location.pathname === "/receitas/nova" ? "active" : ""}`}
