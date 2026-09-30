@@ -2,8 +2,9 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 
 from app.db.session import get_db
-from app.schemas.usuario import UsuarioCreate, UsuarioResponse
+from app.schemas.usuario import UsuarioCreate, UsuarioLogin, UsuarioResponse
 from app.services.usuario import (
+    autenticar_usuario,
     listar_usuarios as listar_usuarios_service,
     obter_usuario_por_email,
     obter_usuario_por_id,
@@ -11,6 +12,17 @@ from app.services.usuario import (
 )
 
 router = APIRouter(prefix="/usuarios", tags=["usuarios"])
+
+
+@router.post("/login", response_model=UsuarioResponse)
+def login_usuario(dados: UsuarioLogin, db: Session = Depends(get_db)):
+    usuario = autenticar_usuario(db, dados.email, dados.senha)
+    if not usuario:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="E-mail ou senha incorretos.",
+        )
+    return usuario
 
 
 @router.post("", response_model=UsuarioResponse, status_code=status.HTTP_201_CREATED)

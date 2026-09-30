@@ -50,6 +50,15 @@ export function AuthProvider({ children }) {
     return novoUsuario;
   }
 
+  async function loginUsuario({ email, senha }) {
+    const usuario = await apiFetch("/api/usuarios/login", {
+      method: "POST",
+      body: JSON.stringify({ email, senha }),
+    });
+    definirUsuarioAtivo(usuario);
+    return usuario;
+  }
+
   function logout() {
     definirUsuarioAtivo(null);
   }
@@ -62,6 +71,7 @@ export function AuthProvider({ children }) {
         carregando,
         definirUsuarioAtivo,
         cadastrarUsuario,
+        loginUsuario,
         carregarUsuarios,
         logout,
       }}

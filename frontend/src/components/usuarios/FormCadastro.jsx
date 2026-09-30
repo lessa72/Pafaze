@@ -1,4 +1,5 @@
 export default function FormCadastro({
+  modo = "cadastro",
   nome,
   setNome,
   email,
@@ -12,19 +13,21 @@ export default function FormCadastro({
 }) {
   return (
     <form onSubmit={onSubmit} className="auth-form" noValidate>
-      <div className="form-group">
-        <label htmlFor="cadastro-nome">Nome Completo</label>
-        <input
-          id="cadastro-nome"
-          type="text"
-          className="form-input"
-          value={nome}
-          onChange={(e) => setNome(e.target.value)}
-          placeholder="Ex: Gabriel Gomes"
-          required
-          disabled={carregando}
-        />
-      </div>
+      {modo === "cadastro" && (
+        <div className="form-group">
+          <label htmlFor="cadastro-nome">Nome Completo</label>
+          <input
+            id="cadastro-nome"
+            type="text"
+            className="form-input"
+            value={nome}
+            onChange={(e) => setNome(e.target.value)}
+            placeholder="Ex: Gabriel Gomes"
+            required
+            disabled={carregando}
+          />
+        </div>
+      )}
 
       <div className="form-group">
         <label htmlFor="cadastro-email">E-mail</label>
@@ -40,7 +43,7 @@ export default function FormCadastro({
         />
       </div>
 
-      <div className="form-row">
+      <div className={modo === "cadastro" ? "form-row" : "form-group"}>
         <div className="form-group">
           <label htmlFor="cadastro-senha">Senha</label>
           <input
@@ -49,25 +52,27 @@ export default function FormCadastro({
             className="form-input"
             value={senha}
             onChange={(e) => setSenha(e.target.value)}
-            placeholder="Mínimo 6 caracteres"
+            placeholder={modo === "cadastro" ? "Mínimo 6 caracteres" : "Digite sua senha"}
             required
             disabled={carregando}
           />
         </div>
 
-        <div className="form-group">
-          <label htmlFor="cadastro-confirma-senha">Confirmar Senha</label>
-          <input
-            id="cadastro-confirma-senha"
-            type="password"
-            className="form-input"
-            value={confirmaSenha}
-            onChange={(e) => setConfirmaSenha(e.target.value)}
-            placeholder="Repita a senha"
-            required
-            disabled={carregando}
-          />
-        </div>
+        {modo === "cadastro" && (
+          <div className="form-group">
+            <label htmlFor="cadastro-confirma-senha">Confirmar Senha</label>
+            <input
+              id="cadastro-confirma-senha"
+              type="password"
+              className="form-input"
+              value={confirmaSenha}
+              onChange={(e) => setConfirmaSenha(e.target.value)}
+              placeholder="Repita a senha"
+              required
+              disabled={carregando}
+            />
+          </div>
+        )}
       </div>
 
       <button
@@ -76,7 +81,11 @@ export default function FormCadastro({
         className="btn btn-primary btn-block"
         disabled={carregando}
       >
-        {carregando ? "Criando sua conta..." : "Criar minha conta"}
+        {carregando
+          ? "Processando..."
+          : modo === "cadastro"
+          ? "Criar minha conta"
+          : "Entrar na conta"}
       </button>
     </form>
   );

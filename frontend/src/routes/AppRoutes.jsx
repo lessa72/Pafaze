@@ -18,6 +18,7 @@ export default function AppRoutes() {
           <Route path="/" element={<ExplorarReceitas />} />
           <Route path="/receitas" element={<ExplorarReceitas />} />
           <Route path="/sobre" element={<Home />} />
+          <Route path="/login" element={<CadastroUsuario />} />
           <Route path="/cadastro" element={<CadastroUsuario />} />
           <Route path="/amigos" element={<Amigos />} />
           <Route
