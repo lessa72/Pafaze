@@ -1,9 +1,15 @@
 import pytest
 
 from app.models.avaliacao import Avaliacao
+from app.models.ingrediente import Ingrediente
 from app.models.receita import Receita
+from app.models.receita_ingrediente import ReceitaIngrediente
 from app.models.usuario import Usuario
-from app.services.receita import buscar_receitas, listar_categorias
+from app.services.receita import (
+    buscar_receitas,
+    buscar_receitas_por_ingredientes,
+    listar_categorias,
+)
 
 
 @pytest.fixture
@@ -71,3 +77,77 @@ def test_listar_categorias_unicas_e_ordenadas(cenario_busca_e_ordenacao):
     db = cenario_busca_e_ordenacao
     categorias = listar_categorias(db)
     assert categorias == ["Lanches", "Sobremesa", "Sopas"]
+
+
+@pytest.fixture
+def cenario_compatibilidade(db_session):
+    db, _ = db_session
+    user = Usuario(nome="Chef Bob", email="bob@test.com", senha_hash="xyz")
+    db.add(user)
+    db.commit()
+
+    i_ovo = Ingrediente(nome="Ovo")
+    i_leite = Ingrediente(nome="Leite")
+    i_farinha = Ingrediente(nome="Farinha")
+    i_acucar = Ingrediente(nome="Açúcar")
+    db.add_all([i_ovo, i_leite, i_farinha, i_acucar])
+    db.commit()
+
+    r1 = Receita(nome="Panqueca", categoria="Lanches", modo_preparo="Frite", usuario_id=user.id)
+    r2 = Receita(nome="Omelete", categoria="Lanches", modo_preparo="Bata", usuario_id=user.id)
+    r3 = Receita(nome="Bolo Simples", categoria="Sobremesa", modo_preparo="Asse", usuario_id=user.id)
+    db.add_all([r1, r2, r3])
+    db.commit()
+
+    db.add_all([
+        ReceitaIngrediente(receita_id=r1.id, ingrediente_id=i_ovo.id, quantidade="2"),
+        ReceitaIngrediente(receita_id=r1.id, ingrediente_id=i_leite.id, quantidade="1 xícara"),
+        ReceitaIngrediente(receita_id=r1.id, ingrediente_id=i_farinha.id, quantidade="1 xícara"),
+        ReceitaIngrediente(receita_id=r2.id, ingrediente_id=i_ovo.id, quantidade="3"),
+        ReceitaIngrediente(receita_id=r3.id, ingrediente_id=i_ovo.id, quantidade="2"),
+        ReceitaIngrediente(receita_id=r3.id, ingrediente_id=i_leite.id, quantidade="1 xícara"),
+        ReceitaIngrediente(receita_id=r3.id, ingrediente_id=i_farinha.id, quantidade="2 xícaras"),
+        ReceitaIngrediente(receita_id=r3.id, ingrediente_id=i_acucar.id, quantidade="1 xícara"),
+    ])
+    db.commit()
+    return db
+
+
+def test_compatibilidade_calculo_e_ordenacao_prioridade(cenario_compatibilidade):
+    db = cenario_compatibilidade
+    res = buscar_receitas_por_ingredientes(db, ["Ovo", "Leite"])
+    assert len(res) == 3
+    assert res[0].nome == "Panqueca"
+    assert res[0].ingredientes_disponiveis == 2
+    assert res[0].ingredientes_faltantes == 1
+
+    assert res[1].nome == "Bolo Simples"
+    assert res[1].ingredientes_disponiveis == 2
+    assert res[1].ingredientes_faltantes == 2
+
+    assert res[2].nome == "Omelete"
+    assert res[2].ingredientes_disponiveis == 1
+    assert res[2].ingredientes_faltantes == 0
+
+
+def test_compatibilidade_todos_ingredientes_disponiveis(cenario_compatibilidade):
+    db = cenario_compatibilidade
+    res = buscar_receitas_por_ingredientes(db, ["ovo"])
+    omelete = next(r for r in res if r.nome == "Omelete")
+    assert omelete.ingredientes_disponiveis == 1
+    assert omelete.ingredientes_faltantes == 0
+    assert omelete.total_ingredientes == 1
+
+
+def test_compatibilidade_normalizacao_e_espacos(cenario_compatibilidade):
+    db = cenario_compatibilidade
+    res = buscar_receitas_por_ingredientes(db, ["  OVO  ", "  lEiTe  ", "   "])
+    assert res[0].ingredientes_disponiveis == 2
+
+
+def test_compatibilidade_sem_correspondencias(cenario_compatibilidade):
+    db = cenario_compatibilidade
+    res = buscar_receitas_por_ingredientes(db, ["Chocolate", "Morango"])
+    for r in res:
+        assert r.ingredientes_disponiveis == 0
+        assert r.ingredientes_faltantes == r.total_ingredientes
