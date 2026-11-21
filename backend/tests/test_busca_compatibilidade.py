@@ -151,3 +151,36 @@ def test_compatibilidade_sem_correspondencias(cenario_compatibilidade):
     for r in res:
         assert r.ingredientes_disponiveis == 0
         assert r.ingredientes_faltantes == r.total_ingredientes
+
+
+def test_api_pesquisar_receitas_filtros_e_ordenacao(client, cenario_busca_e_ordenacao):
+    res = client.get("/api/receitas?nome=bolo&categoria=Sobremesa&ordenar_por=avaliacao&ordem=desc")
+    assert res.status_code == 200
+    dados = res.json()
+    assert len(dados) == 2
+    assert dados[0]["nome"] == "Bolo de Chocolate"
+    assert dados[0]["media_avaliacao"] == 5.0
+    assert dados[1]["nome"] == "Bolo de Cenoura"
+    assert dados[1]["media_avaliacao"] == 3.5
+
+
+def test_api_listar_categorias(client, cenario_busca_e_ordenacao):
+    res = client.get("/api/receitas/categorias")
+    assert res.status_code == 200
+    assert res.json() == ["Lanches", "Sobremesa", "Sopas"]
+
+
+def test_api_compatibilidade_ingredientes(client, cenario_compatibilidade):
+    res = client.get("/api/receitas/compatibilidade?ingredientes=Ovo&ingredientes=Leite")
+    assert res.status_code == 200
+    dados = res.json()
+    assert len(dados) == 3
+    assert dados[0]["nome"] == "Panqueca"
+    assert dados[0]["ingredientes_disponiveis"] == 2
+    assert dados[0]["ingredientes_faltantes"] == 1
+    assert dados[0]["total_ingredientes"] == 3
+
+
+def test_api_compatibilidade_sem_ingredientes_retorna_422(client):
+    res = client.get("/api/receitas/compatibilidade")
+    assert res.status_code == 422
