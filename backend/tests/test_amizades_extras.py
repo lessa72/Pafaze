@@ -85,3 +85,67 @@ def test_responder_e_remover_amizade_inexistente(usuarios_amizade):
 
     with pytest.raises(ValueError, match="Amizade não encontrada."):
         remover_amigo(db, u1.id, u3.id)
+
+
+def test_api_solicitar_amizade_usuarios_inexistentes_e_invertido(client, usuarios_amizade):
+    _, u1, u2, _ = usuarios_amizade
+
+    res_remetente_inexistente = client.post(f"/api/usuarios/999/amigos/{u2.id}")
+    assert res_remetente_inexistente.status_code == 400
+    assert res_remetente_inexistente.json()["detail"] == "Usuário não encontrado."
+
+    res_destinatario_inexistente = client.post(f"/api/usuarios/{u1.id}/amigos/999")
+    assert res_destinatario_inexistente.status_code == 400
+    assert res_destinatario_inexistente.json()["detail"] == "Amigo não encontrado."
+
+    assert client.post(f"/api/usuarios/{u1.id}/amigos/{u2.id}").status_code == 201
+    res_invertido = client.post(f"/api/usuarios/{u2.id}/amigos/{u1.id}")
+    assert res_invertido.status_code == 400
+    assert res_invertido.json()["detail"] == "Já existe um pedido de amizade pendente."
+
+
+def test_api_recusar_reenviar_e_solicitar_ja_amigos(client, usuarios_amizade):
+    _, u1, u2, _ = usuarios_amizade
+
+    client.post(f"/api/usuarios/{u1.id}/amigos/{u2.id}")
+    res_recusa = client.patch(
+        f"/api/usuarios/{u2.id}/amigos/{u1.id}", json={"status": "recusado"}
+    )
+    assert res_recusa.status_code == 200
+    assert res_recusa.json()["status"] == "recusado"
+
+    # Reenvia pedido após recusa e aceita
+    res_reenvio = client.post(f"/api/usuarios/{u2.id}/amigos/{u1.id}")
+    assert res_reenvio.status_code == 201
+    assert res_reenvio.json()["status"] == "pendente"
+
+    res_aceite = client.patch(
+        f"/api/usuarios/{u1.id}/amigos/{u2.id}", json={"status": "aceito"}
+    )
+    assert res_aceite.status_code == 200
+
+    res_ja_amigos = client.post(f"/api/usuarios/{u1.id}/amigos/{u2.id}")
+    assert res_ja_amigos.status_code == 400
+    assert res_ja_amigos.json()["detail"] == "Usuários já são amigos."
+
+
+def test_api_responder_e_remover_amizade_erros(client, usuarios_amizade):
+    _, u1, u2, _ = usuarios_amizade
+
+    res_pedido_inexistente = client.patch(
+        f"/api/usuarios/{u2.id}/amigos/{u1.id}", json={"status": "aceito"}
+    )
+    assert res_pedido_inexistente.status_code == 400
+    assert (
+        res_pedido_inexistente.json()["detail"]
+        == "Pedido de amizade pendente não encontrado."
+    )
+
+    res_status_invalido = client.patch(
+        f"/api/usuarios/{u2.id}/amigos/{u1.id}", json={"status": "talvez"}
+    )
+    assert res_status_invalido.status_code == 422
+
+    res_del_inexistente = client.delete(f"/api/usuarios/{u1.id}/amigos/{u2.id}")
+    assert res_del_inexistente.status_code == 400
+    assert res_del_inexistente.json()["detail"] == "Amizade não encontrada."
